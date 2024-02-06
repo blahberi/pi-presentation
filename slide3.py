@@ -98,7 +98,7 @@ class Slide3(PresentationScene):
         self.end_fragment()
         
 
-        halfcircle = ArcBetweenPoints(circle.get_right(), circle.get_left(), angle=PI, color=gruvbox.PRIMARY, stroke_width=4)
+        halfcircle = ArcBetweenPoints(circle.get_left(), circle.get_right(), angle=PI, color=gruvbox.PRIMARY, stroke_width=4)
         self.play(TransformFromCopy(base, halfcircle), run_time=2)
         self.end_fragment()
         
