@@ -5,27 +5,7 @@ from manim import *
 from manim_revealjs import PresentationScene, LOOP
 import random
 import numpy as np
-
-
-def get_vertices(n, circle):
-    return [circle.point_from_proportion(i/n) for i in range(n)]
-
-def approximate_circle(n, circle):
-    return Polygon(*get_vertices(n, circle), color=gruvbox.PRIMARY, stroke_width=2)
-
-def create_dissection(polygon):
-    return VGroup(*[Line(polygon.get_center(), polygon.get_vertices()[i], color=gruvbox.PRIMARY, stroke_width=1) for i in range(len(polygon.get_vertices()))])
-
-def draw_dissection(dissection):
-    return AnimationGroup(*[Create(line) for line in dissection])
-
-def get_riemann_rectangles(axis, function, dx=0.5):
-    rectangles = axis.get_riemann_rectangles(function, dx=dx, x_range=[-1, 1], stroke_color=gruvbox.BG, stroke_width=10*dx)
-    start_color = ManimColor(gruvbox.LIGHT_BLUE)
-    end_color = ManimColor(gruvbox.CYAN)
-    for i, rect in enumerate(rectangles):
-        rect.set_fill(color=interpolate_color(start_color, end_color, i/len(rectangles)))
-    return rectangles
+from utils import *
 
 
 def interpolate_time(min_time, max_time, min_val, max_val, val):
@@ -41,16 +21,19 @@ class Slide1(PresentationScene):
         self.add(circle1)
 
         n1 = 6
-        polygon = approximate_circle(n1, circle1)
-        dissection = create_dissection(polygon)
+        inner_polygon = approximate_circle_inner(n1, circle1)
+        dissection = dissect_polygon(inner_polygon)
+        outer_polygon = approximate_circle_outer(n1-2, circle1)
+
 
         dx = 0.15
         axis = Axes(color=gruvbox.FG, x_range=[-1.25, 1.25], y_range=[-0.5, 1.25], x_length=abs(1.25-(-1.25)), y_length=abs(1.25-(-0.5)), axis_config={"color": gruvbox.FG, "stroke_width": 2}, tips=False).scale(2).to_corner(UL)
         circle2 = axis.plot(lambda x: np.sqrt(1 - x**2), x_range=[-1, 1, 0.001], color=gruvbox.FG, stroke_width=2, use_smoothing=False)
         reimann_rects = get_riemann_rectangles(axis, circle2, dx)
 
-        self.add(polygon)
+        self.add(inner_polygon)
         self.add(dissection)
+        self.add(outer_polygon)
         self.add(axis)
         self.add(circle2)
         self.add(reimann_rects)
@@ -67,28 +50,32 @@ class Slide1(PresentationScene):
         self.add(ramanujan)
         self.add(credits)
         
-        for n, dx in zip([10, 8, 6, 12, 8, 10, 8, 6], [0.1, 0.05, 0.03, 0.01, 0.005, 0.003, 0.001, 0.15]):
-            next_polygon = approximate_circle(n, circle1)
-            next_dissection = create_dissection(next_polygon)
+        for n, dx in zip([8, 10, 16, 20, 30, 50, 100, 6], [0.1, 0.05, 0.03, 0.01, 0.005, 0.003, 0.001, 0.15]):
+            next_inner_polygon = approximate_circle_inner(n, circle1)
+            next_dissection = dissect_polygon(next_inner_polygon) 
+            next_outer_polygon = approximate_circle_outer(n-2, circle1)
             
-            direction = 1 if n > n1 else -1
-            angle = direction*int(n/1.5)*2*PI/n
-            time = interpolate_time(0.6, 0.5, 2, 6, abs(n1 - n))
+            angle = PI
+            time = 0.5
 
-            always_rotate(polygon, rate=angle/time)
-            always_rotate(next_polygon, rate=angle/time)
+            always_rotate(inner_polygon, rate=angle/time)
+            always_rotate(next_inner_polygon, rate=angle/time)
             always_rotate(dissection, rate=angle/time)
             always_rotate(next_dissection, rate=angle/time)
+            always_rotate(outer_polygon, rate=angle/time)
+            always_rotate(next_outer_polygon, rate=angle/time)
 
-            self.play(Transform(polygon, next_polygon), Transform(dissection, next_dissection), run_time=time + 0.01, rate_func=linear)
+            self.play(Transform(inner_polygon, next_inner_polygon), Transform(dissection, next_dissection), Transform(outer_polygon, next_outer_polygon), run_time=time + 0.01, rate_func=linear)
             
-            polygon.clear_updaters()
-            next_polygon.clear_updaters()
+            inner_polygon.clear_updaters()
+            next_inner_polygon.clear_updaters()
             dissection.clear_updaters()
             next_dissection.clear_updaters()
+            outer_polygon.clear_updaters()
 
-            polygon.rotate(-angle)
+            inner_polygon.rotate(-angle)
             dissection.rotate(-angle)
+            outer_polygon.rotate(-angle)
             
             loc = 0.1
             scale = 0.1
@@ -98,5 +85,4 @@ class Slide1(PresentationScene):
             self.play(Transform(reimann_rects, get_riemann_rectangles(axis, circle2, dx)), run_time=time)
 
             self.wait(1)
-            n1 = n
         self.end_fragment(fragment_type=LOOP)
