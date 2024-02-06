@@ -12,7 +12,7 @@ def approximate_circle_inner(n, circle):
 def approximate_circle_outer(n, circle):
     r = circle.get_width()/2
     c = circle.get_center()
-    vertices = [(c[0] + (r/np.cos(PI/n))*np.cos(2*PI*i/n + PI/4), c[1] + (r/np.cos(PI/n))*np.sin(2*PI*i/n + PI/4), 0) for i in range(n)]
+    vertices = [(c[0] + (r/np.cos(PI/n))*np.cos(2*PI*i/n + PI/n), c[1] + (r/np.cos(PI/n))*np.sin(2*PI*i/n + PI/n), 0) for i in range(n)]
 
     return Polygon(*vertices, color=gruvbox.PRIMARY, stroke_width=2)
 

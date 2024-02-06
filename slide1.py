@@ -41,7 +41,7 @@ class Slide1(PresentationScene):
         text = Text("The history of", color = gruvbox.FG).scale(2).to_corner(UR, buff=1).shift(0.5*RIGHT)
         pi = Tex(r"$\pi$", color = gruvbox.YELLOW).scale(10)
 
-        ramanujan = MathTex(r" = \frac{1}{\frac{2\sqrt{2}}{9801} \sum_{k=0}^{\infty} \frac{(4k)!(1103+26390k)}{(k!)^4 396^{4k}}}", color = gruvbox.FG).scale(1).to_corner(DL, buff=1).shift(0.5*RIGHT)
+        ramanujan = MathTex(r" = \left(12 \sum_{k=0}^{\infty} \frac{(-1)^k (6k)! (545140134k + 13591409)}{(3k)!(k!)^3 640320^{3k + \frac{3}{2}}}\right)^{-1}", color = gruvbox.FG).scale(0.75).to_corner(DL, buff=1).to_edge(LEFT, buff=0.5)
         credits = Tex("A presentation by Eitan H. celebrating $\pi$ day 2024", color = gruvbox.PRIMARY).scale(0.5).next_to(ramanujan, DOWN, buff=0.5)
 
 
@@ -49,7 +49,7 @@ class Slide1(PresentationScene):
         self.add(pi)
         self.add(ramanujan)
         self.add(credits)
-        
+
         for n, dx in zip([8, 10, 16, 20, 30, 50, 100, 6], [0.1, 0.05, 0.03, 0.01, 0.005, 0.003, 0.001, 0.15]):
             next_inner_polygon = approximate_circle_inner(n, circle1)
             next_dissection = dissect_polygon(next_inner_polygon) 
