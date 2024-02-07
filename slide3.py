@@ -16,8 +16,8 @@ class Slide3(PresentationScene):
         self.add(title)
 
 
-        circle = Circle(color=gruvbox.FG, fill_color=gruvbox.SECONDARY, fill_opacity=0.5, stroke_width=3, radius=1).scale(2)
-        self.play(title.animate.to_edge(UP, buff=0.5), run_time=1)
+        circle = Circle(color=gruvbox.FG, fill_color=gruvbox.SECONDARY, fill_opacity=0.75, stroke_width=3, radius=1).scale(2)
+        self.play(title.animate.to_edge(UP, buff=0.5))
         self.play(DrawBorderThenFill(circle))
         self.end_fragment()
 
@@ -42,10 +42,6 @@ class Slide3(PresentationScene):
         laid_sectors.scale(0.5).to_edge(RIGHT, buff=0.75)
         self.play(group.animate.to_edge(LEFT, buff=1))
         self.play(TransformFromCopy(sectors, laid_sectors), run_time=2)
-        self.wait(1)
-        self.end_fragment()
-
-
         lh, rh = VGroup(*laid_sectors[:n // 2]), VGroup(*laid_sectors[n // 2:])
         d = circle.get_width()*(1-np.cos(PI/n))/8
         lh.generate_target()
@@ -61,7 +57,7 @@ class Slide3(PresentationScene):
         self.end_fragment()
 
 
-        for n in [16, 32, 64, 128, 256]:
+        for n in [16, 32, 64, 128, 256, 512, 1024]:
             new_sectors = sector_dissect_circle(circle, n, stroke_width=16/n)
 
             laid_sectors  = new_sectors.copy()
@@ -82,12 +78,12 @@ class Slide3(PresentationScene):
             VGroup(next_lh, next_rh).scale(2)
             self.play(Transform(sectors, new_sectors), Transform(lh, next_lh), Transform(rh, next_rh))
             self.wait(0.5)
-        self.end_fragment()
-        
-        
+            if n in [16, 32, 64]:
+                self.end_fragment()
+               
         rectangle = VGroup(lh, rh)
-        next_rectangle = Rectangle(width=PI*circle.get_width()/2, height=circle.get_width()/2, fill_color=darken_color(gruvbox.SECONDARY, 0.2), fill_opacity=1, stroke_width=0).move_to(rectangle)
-        circle.set_fill(color=darken_color(gruvbox.SECONDARY, 0.2)).set_stroke(width=0)
+        next_rectangle = Rectangle(width=PI*circle.get_width()/2, height=circle.get_width()/2, fill_color=darken_color(gruvbox.SECONDARY, 0.1), fill_opacity=1, stroke_width=0).move_to(rectangle)
+        circle.set_fill(color=darken_color(gruvbox.SECONDARY, 0.1)).set_stroke(width=0)
         self.play(FadeTransform(rectangle, next_rectangle), sectors.animate.set_opacity(0), circle.animate.set_opacity(1))
         rectangle = next_rectangle
         self.end_fragment()
@@ -95,14 +91,10 @@ class Slide3(PresentationScene):
 
         base = Line(rectangle.get_corner(DL), rectangle.get_corner(DR), color=gruvbox.PRIMARY, stroke_width=4)
         self.play(Create(base))
-        self.end_fragment()
-        
-
-        halfcircle = ArcBetweenPoints(circle.get_left(), circle.get_right(), angle=PI, color=gruvbox.PRIMARY, stroke_width=4)
-        self.play(TransformFromCopy(base, halfcircle), run_time=2)
-        self.end_fragment()
-        
-
+        self.wait(0.5)
+        halfcircle = ArcBetweenPoints(circle.get_left(), circle.get_right(), angle=-PI, color=gruvbox.PRIMARY, stroke_width=4)
+        self.play(TransformFromCopy(base, halfcircle), run_time=1.5)
+        self.wait(0.5)
         base_text = Tex(r"$\pi r$", color=gruvbox.PRIMARY).next_to(base, DOWN, buff=0.3)
         self.play(Write(base_text))
         self.end_fragment()
@@ -110,14 +102,10 @@ class Slide3(PresentationScene):
 
         height = Line(rectangle.get_corner(UL), rectangle.get_corner(DL), color=gruvbox.PRIMARY, stroke_width=4)
         self.play(Create(height), FadeOut(halfcircle))
-        self.end_fragment()
-
-
+        self.wait(0.5)
         radius = Line(circle.get_center(), circle.get_right(), color=gruvbox.PRIMARY, stroke_width=4)
-        self.play(TransformFromCopy(height, radius), run_time=2)
-        self.end_fragment()
-
-
+        self.play(TransformFromCopy(height, radius))
+        self.wait(0.5)
         height_text = Tex(r"$r$", color=gruvbox.PRIMARY).next_to(height, LEFT, buff=0.3)
         self.play(Write(height_text))
         self.end_fragment()
@@ -130,5 +118,11 @@ class Slide3(PresentationScene):
 
 
         self.play(Write(formula[0][6:]))
+        self.wait(0.5)
         self.play(Transform(formula[0][:2], formula2[0][:2]), Transform(formula[0][7:], formula2[0][2:]), FadeOut(formula[0][2:7]))
+        self.end_fragment()
+
+
+        area_text = Tex("$\\pi r^2$", color=gruvbox.FG).scale(2).move_to(circle)
+        self.play(TransformFromCopy(formula[0][7:], area_text))
         self.end_fragment()
