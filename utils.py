@@ -1,6 +1,6 @@
 from manim import *
 import numpy as np
-from color_schemes import gruvbox
+from gruvbox_manim import gruvbox
 import itertools as it
 
 

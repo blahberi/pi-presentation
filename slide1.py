@@ -1,29 +1,21 @@
-import color_schemes
-from color_schemes import gruvbox
-import fonts
+from gruvbox_manim import gruvbox
 from manim import *
 from manim_revealjs import PresentationScene, LOOP
-import random
 import numpy as np
 from utils import *
-
 
 def interpolate_time(min_time, max_time, min_val, max_val, val):
     return (val - min_val)/(max_val - min_val)*(max_time - min_time) + min_time
 
-
 class Slide1(PresentationScene):
     def construct(self):
-        color_schemes.set_theme(self, gruvbox)
-        fonts.set_font()
-
-        circle1 = Circle(color=gruvbox.FG, stroke_width=3, radius=1).scale(2).to_corner(DR)
+        circle1 = Circle(stroke_width=3, radius=1).scale(2).to_corner(DR)
         self.add(circle1)
 
         n1 = 6
         inner_polygon = approximate_circle_inner(n1, circle1)
         dissection = dissect_polygon(inner_polygon)
-        outer_polygon = approximate_circle_outer(n1-2, circle1)
+        outer_polygon = approximate_circle_outer(n1, circle1)
 
 
         dx = 0.15
@@ -49,11 +41,10 @@ class Slide1(PresentationScene):
         self.add(pi)
         self.add(ramanujan)
         self.add(credits)
-
         for n, dx in zip([8, 10, 16, 20, 30, 50, 100, 6], [0.1, 0.05, 0.03, 0.01, 0.005, 0.003, 0.001, 0.15]):
             next_inner_polygon = approximate_circle_inner(n, circle1)
             next_dissection = dissect_polygon(next_inner_polygon) 
-            next_outer_polygon = approximate_circle_outer(n-2, circle1)
+            next_outer_polygon = approximate_circle_outer(n, circle1)
             
             angle = PI
             time = 0.5

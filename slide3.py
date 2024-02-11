@@ -1,6 +1,4 @@
-import color_schemes
-from color_schemes import gruvbox
-import fonts
+from gruvbox_manim import gruvbox
 from manim import *
 import numpy as np
 from utils import *
@@ -9,9 +7,6 @@ from manim_revealjs import PresentationScene
 
 class Slide3(PresentationScene):
     def construct(self):
-        color_schemes.set_theme(self, gruvbox)
-        fonts.set_font()
-
         title = Tex(r"What about the area?", color = gruvbox.PRIMARY).scale(2)
         self.add(title)
 

@@ -1,19 +1,14 @@
-import color_schemes
-from color_schemes import gruvbox
-import fonts
+from gruvbox_manim import gruvbox
 from manim import *
 from manim_revealjs import PresentationScene
 
 
 class Slide2(PresentationScene):
     def construct(self):
-        color_schemes.set_theme(self, gruvbox)
-        fonts.set_font()
-
         title = Tex(r"What is $\pi$?", color = gruvbox.SECONDARY).scale(2)
         self.add(title)
 
-        self.play(title.animate.to_edge(UP, buff=0.5), run_time=1)
+        self.play(title.animate.to_edge(UP, buff=0.5))
         
         circle = Circle(color=gruvbox.FG, stroke_width=3, radius=1).scale(2).to_edge(RIGHT, buff=1)
         diameter = Line(circle.get_left(), circle.get_right(), color=gruvbox.PRIMARY, stroke_width=3)
